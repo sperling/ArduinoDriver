@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 
 namespace ArduinoDriver.SerialProtocol
 {
@@ -56,6 +57,14 @@ namespace ArduinoDriver.SerialProtocol
                 case CommandConstants.ShiftInAck:
                 {
                     return new ShiftInResponse(bytes[1], bytes[2], (BitOrder)bytes[3], bytes[4]);
+                }
+                case CommandConstants.ExtDigitalWriteAck:
+                {
+                    return new ExtDigitalWriteReponse();
+                }
+                case CommandConstants.ExtShiftOutAck:
+                {
+                    return new ExtShiftOutResponse();
                 }
                 default:
                 {

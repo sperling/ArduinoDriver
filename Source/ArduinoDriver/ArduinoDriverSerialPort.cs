@@ -48,7 +48,7 @@ namespace ArduinoDriver
                        && responseBytes[2] == bytes[1]
                        && responseBytes[3] == bytes[0];
             }
-            catch (TimeoutException e)
+            catch (TimeoutException)
             {
                 logger.Trace("Timeout while trying to get sync...");
                 return false;

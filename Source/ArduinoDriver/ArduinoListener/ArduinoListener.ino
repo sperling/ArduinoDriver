@@ -16,7 +16,7 @@ const byte START_OF_RESPONSE_MARKER   = 0xf9;
 const byte ERROR_MARKER               = 0xef;
 
 const unsigned int PROTOCOL_VERSION_MAJOR = 1;
-const unsigned int PROTOCOL_VERSION_MINOR = 2;
+const unsigned int PROTOCOL_VERSION_MINOR = 3;
 
 const byte CMD_HANDSHAKE_INITIATE     = 0x01;
 const byte ACK_HANDSHAKE_INITIATE     = 0x02;
@@ -41,6 +41,10 @@ const byte CMD_SHIFTOUT               = 0x13;
 const byte ACK_SHIFTOUT               = 0x14;
 const byte CMD_SHIFTIN                = 0x15;
 const byte ACK_SHIFTIN                = 0x16;
+const byte CMD_EXTDIGITALWRITE        = 0x17;
+const byte ACK_EXTDIGITALWRITE        = 0x18;
+const byte CMD_EXTSHIFTOUT            = 0x19;
+const byte ACK_EXTSHIFTOUT            = 0x1a;
 
 byte data[64];
 byte commandByte, lengthByte, syncByte, fletcherByte1, fletcherByte2;
@@ -161,6 +165,18 @@ void loop() {
        Serial.write(digitalPinState); // pin state
        Serial.flush();
        break;
+    case CMD_EXTDIGITALWRITE:
+       for (int current = 0; current < data[2]; current++) {
+         digitalPinToWrite = data[3 + current * 2];
+         digitalPinState = data[3 + current * 2 + 1];
+         if (digitalPinState == 0) { digitalWrite(digitalPinToWrite, LOW); }
+         if (digitalPinState == 1) { digitalWrite(digitalPinToWrite, HIGH); }         
+       }
+       Serial.write(START_OF_RESPONSE_MARKER);
+       Serial.write(1);
+       Serial.write(ACK_EXTDIGITALWRITE);
+       Serial.flush();
+       break;
     case CMD_PINMODE:
        digitalPinToWrite = data[2];
        digitalPinState = data[3];
@@ -245,6 +261,20 @@ void loop() {
       Serial.write(clockPinToWrite);
       Serial.write(bitOrder);
       Serial.write(shiftOutValue);
+      Serial.flush();
+      break;
+    case CMD_EXTSHIFTOUT:
+      for (int current = 0; current < data[2]; current++) {
+         digitalPinToWrite = data[3 + current * 4];
+         clockPinToWrite = data[3 + current * 4 + 1];
+         bitOrder = data[3 + current * 4 + 2];
+         shiftOutValue = data[3 + current * 4 + 3];
+         if (bitOrder == 0) { shiftOut(digitalPinToWrite, clockPinToWrite, LSBFIRST, shiftOutValue); }      
+         if (bitOrder == 1) { shiftOut(digitalPinToWrite, clockPinToWrite, MSBFIRST, shiftOutValue); }
+      }      
+      Serial.write(START_OF_RESPONSE_MARKER);
+      Serial.write(1);
+      Serial.write(ACK_EXTSHIFTOUT);
       Serial.flush();
       break;
     case CMD_SHIFTIN:
