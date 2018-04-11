@@ -6,7 +6,7 @@ namespace ArduinoDriver.SerialProtocol
     {
         public const int MaxDigitalWrites = 29;
 
-        public ExtDigitalWriteRequest(params DigitalWriteInfo[] digitalWrites) : base(CommandConstants.ExtDigitalWrite)
+        public ExtDigitalWriteRequest(params DigitalInfo[] digitalWrites) : base(CommandConstants.ExtDigitalWrite)
         {
             // buffer = 64 - command + request length + crc = 4 - number of writes = 1 == 59 / pin = 1 + value = 1 == 59 / 2 == 29 writes
             if (digitalWrites == null)
@@ -21,7 +21,7 @@ namespace ArduinoDriver.SerialProtocol
             Bytes.Add((byte)digitalWrites.Length);
             foreach (var digitalWrite in digitalWrites)
             {
-                Bytes.Add(digitalWrite.PinToWrite);
+                Bytes.Add(digitalWrite.Pin);
                 Bytes.Add((byte)digitalWrite.PinValue);
             }
         }

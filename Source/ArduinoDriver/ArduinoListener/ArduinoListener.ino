@@ -45,6 +45,8 @@ const byte CMD_EXTDIGITALWRITE        = 0x17;
 const byte ACK_EXTDIGITALWRITE        = 0x18;
 const byte CMD_EXTSHIFTOUT            = 0x19;
 const byte ACK_EXTSHIFTOUT            = 0x1a;
+const byte CMD_EXTDIGITALREAD         = 0x1b;
+const byte ACK_EXTDIGITALREAD         = 0x1c;
 
 byte data[64];
 byte commandByte, lengthByte, syncByte, fletcherByte1, fletcherByte2;
@@ -151,6 +153,19 @@ void loop() {
        Serial.write(ACK_DIGITALREAD);
        Serial.write(digitalPinToRead); // pin read
        Serial.write(digitalPinState); // pin state
+       Serial.flush();
+       break;
+    case CMD_EXTDIGITALREAD:       
+       Serial.write(START_OF_RESPONSE_MARKER);
+       Serial.write(2 + data[2] * 2);
+       Serial.write(ACK_EXTDIGITALREAD);
+       Serial.write(data[2]);
+       for (int current = 0; current < data[2]; current++) {
+         digitalPinToRead = data[3 + current];
+         digitalPinState = digitalRead(digitalPinToRead);
+         Serial.write(digitalPinToRead);
+         Serial.write(digitalPinState);
+       }
        Serial.flush();
        break;
     case CMD_DIGITALWRITE:

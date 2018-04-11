@@ -36,5 +36,7 @@
         public const byte ExtDigitalWriteAck        = 0x18;
         public const byte ExtShiftOut               = 0x19;
         public const byte ExtShiftOutAck            = 0x1A;
+        public const byte ExtDigitalRead            = 0x1B;
+        public const byte ExtDigitalReadAck         = 0x1C;
     }
 }

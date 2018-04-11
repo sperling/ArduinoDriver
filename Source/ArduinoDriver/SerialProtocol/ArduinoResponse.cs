@@ -66,6 +66,15 @@ namespace ArduinoDriver.SerialProtocol
                 {
                     return new ExtShiftOutResponse();
                 }
+                case CommandConstants.ExtDigitalReadAck:
+                {
+                    var readValues = new List<DigitalInfo>(bytes[1]);
+                    for (int i = 0; i < bytes[1]; i++)
+                    {
+                        readValues.Add(new DigitalInfo(bytes[2 + i * 2], bytes[2 + i * 2 + 1] == 0 ? DigitalValue.Low : DigitalValue.High));
+                    }
+                    return new ExtDigitalReadResponse(readValues);
+                }
                 default:
                 {
                     throw new IOException(string.Format("Unexpected command byte in response: {0}!", commandByte));

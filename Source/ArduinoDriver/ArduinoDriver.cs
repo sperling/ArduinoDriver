@@ -121,6 +121,16 @@ namespace ArduinoDriver
         }
 
         /// <summary>
+        /// Sends a Digital Read Request to the Arduino.
+        /// </summary>
+        /// <param name="request">Digital Read Request</param>
+        /// <returns>The Digital Read Response</returns>
+        public ExtDigitalReadResponse Send(ExtDigitalReadRequest request)
+        {
+            return (ExtDigitalReadResponse)InternalSend(request);
+        }
+
+        /// <summary>
         /// Sends a Digital Write Request to the Arduino.
         /// </summary>
         /// <param name="request">Digital Write Request</param>
